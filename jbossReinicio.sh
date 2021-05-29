@@ -93,23 +93,23 @@ jbossVersion=""
 
 #############
 PID=$(searchPIDByPort $PORT)
-#echo "Este es el PID: "$PID
+echo "Este es el PID: "$PID
 
+sleep 1
 ##Validar Jboss-4.3:
-jboss4Validate=$(ps axfu | grep -i $PID | grep "/jboss-4")
+jboss4Validate=$"(ps axfu | grep $PID | grep /jboss-4)"
 
 ##Valida si es una instancia jboss-4.3, dado que la salida por terminal es diferente.
-if [[ -n $jboss4Validate ]]
-then
+if [[ -z $jboss4Validate ]]; then
     ##Es Jboss-4
-    nomInstancia=${jboss4Validate##* }
+    nomInstancia="${jboss4Validate##* }"
     RUTE="/Appweb/jboss-4.3/server/"
 else
     ##Es version mayor a 4.3
     instanceRawData=$(searchInstanceDataByPID $PID)
     #echo $instanceRawData
     RUTE=$(searchPathByInstanceRawData "$instanceRawData")
-    #echo $RUTE
+    echo $RUTE
     nomInstancia="${RUTE##*/}" #Extraer Nombre de instancia
 fi
 
@@ -133,7 +133,6 @@ echo -e "${greenColour}#########################################################
 echo -n -e "${redColour}++Borrar contenido de Tmp/ Log/ Work/ (si/no):"
 read choose
 if [[ "$choose" = "si" || "$choose" = "SI" ]]; then
-    #TODO: Ver si la carpeta es tmp
     echo "Borrando el contenido..."
     trashPath="/Appweb/$jbossVersion/server/$nomInstancia/"
     echo $(rm -r "$trashPath"log/* ; rm -r "$trashPath"tmp/* ; rm -r "$trashPath"work/* )
